@@ -1,0 +1,25 @@
+{
+  "name": "droprobot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chrome-launcher": "^0.14.0",
+    "node-notifier": "^10.0.0",
+    "selenium-webdriver": "^4.0.0-beta.4"
+  },
+  "devDependencies": {
+    "@types/node": "^15.12.2",
+    "@types/node-notifier": "^8.0.0",
+    "@types/selenium-webdriver": "^4.0.13",
+    "@typescript-eslint/eslint-plugin": "^4.27.0",
+    "@typescript-eslint/parser": "^4.27.0",
+    "eslint": "^7.28.0",
+    "typescript": "^4.3.2"
+  }
+}
