@@ -4,6 +4,7 @@ import { launch } from "chrome-launcher";
 import { Options } from "selenium-webdriver/chrome";
 
 const url = "https://shop.nvidia.com/fr-fr/geforce/store/?page=1&limit=9&locale=fr-fr&gpu=RTX%203070%20Ti,RTX%203070,RTX%203080&manufacturer=NVIDIA&manufacturer_filter=NVIDIA~3,ACER~0,ALIENWARE~0,AORUS~0,ASUS~4,DELL~0,EVGA~10,GAINWARD~2,GIGABYTE~9,HP~0,INNO3D~0,MSI~9,PALIT~5,PNY~4,RAZER~0,ZOTAC~1";
+const selectorResults = "div.total-products-text > div";
 
 interface Stock {
     name: string;
@@ -32,6 +33,13 @@ async function init() {
 async function checkStock() {
     await driver.manage().deleteAllCookies();
     await driver.navigate().refresh();
+    try {
+        const result = await driver.findElement(By.css(selectorResults)).getText();
+        if(!result.includes("3")) throw Error();
+    } catch(e) {
+        console.error("Site inaccessible, réinitialisation driver...");
+        await reinit();
+    }
     const promises = stockSelectors.map(async card => {
         const text = await driver.findElement(By.css(card.selector)).getText();
         card.stock = !text.includes("RUPTURE DE STOCK");
@@ -46,6 +54,11 @@ async function checkStock() {
     });
 }
 
+async function reinit() {
+    if (driver) await driver.close();
+    await init();
+}
+
 function notification(message: string) {
     const toast = new WindowsToaster();
     toast.notify({
@@ -53,7 +66,7 @@ function notification(message: string) {
         message: message,
         sound: true,
         wait: true
-    }, (error, response) => {
+    }, () => {
         launch({
             startingUrl: url
         });
@@ -67,6 +80,7 @@ async function exit() {
 
 async function main() {
     await init();
+    await checkStock();
     setInterval(checkStock, 30000);
 }
 
